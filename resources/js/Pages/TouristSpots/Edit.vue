@@ -86,7 +86,13 @@
                                     id="category_id"
                                 >
                                     <option value="">Select a category</option>
-                                    <!-- Add options dynamically based on available categories -->
+                                    <option
+                                        v-for="category in categories"
+                                        :key="category.category_id"
+                                        :value="category.category_id"
+                                    >
+                                        {{ category.name }}
+                                    </option>
                                 </select>
                             </div>
                             <div class="flex items-center justify-between">
@@ -111,6 +117,7 @@ import { useForm } from "@inertiajs/vue3";
 
 const props = defineProps({
     touristSpot: Object,
+    categories: Array,
 });
 
 const form = useForm({
@@ -122,6 +129,6 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.put(route("spot.update", props.touristSpot.spot_id));
+    form.put(route("tourist-spots.update", props.touristSpot.spot_id));
 };
 </script>

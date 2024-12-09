@@ -39,9 +39,13 @@ class TouristSpotController extends Controller
     }
 
     public function edit(TouristSpot $touristSpot)
-    {
-        return Inertia::render('TouristSpots/Edit', ['touristSpot' => $touristSpot]);
-    }
+{
+    $categories = Category::all();
+    return Inertia::render('TouristSpots/Edit', [
+        'touristSpot' => $touristSpot,
+        'categories' => $categories,
+    ]);
+}
 
     public function update(Request $request, TouristSpot $touristSpot)
     {
