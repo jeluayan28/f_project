@@ -129,6 +129,6 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.put(route("tourist-spots.update", props.touristSpot.spot_id));
+    form.put(route("spot.update", { spot: props.touristSpot.spot_id }));
 };
 </script>

@@ -109,7 +109,7 @@
 
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 
 const props = defineProps({
     touristSpots: Array,
@@ -117,7 +117,22 @@ const props = defineProps({
 
 const deleteSpot = (id) => {
     if (confirm("Are you sure you want to delete this tourist spot?")) {
-        this.$inertia.delete(route("spot.destroy", id));
+        router.delete(
+            route("spot.destroy", id),
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                },
+                onError: (errors) => {
+                    alert(
+                        errors.error ||
+                            "An error occurred while deleting the tourist spot."
+                    );
+                },
+            }
+        );
     }
 };
 </script>

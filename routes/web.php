@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristSpotController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -22,6 +23,8 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::resource('spot', TouristSpotController::class);
+    
+    Route::delete('/tourist-spots/{id}', [TouristSpotController::class, 'destroy'])->name('spot.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
