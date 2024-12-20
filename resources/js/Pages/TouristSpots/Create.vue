@@ -27,6 +27,7 @@
                                         v-model="form.name"
                                         id="name"
                                         type="text"
+                                        maxlength="20"
                                         placeholder="Tourist Spot Name"
                                         class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
                                     />
@@ -58,6 +59,7 @@
                                     v-model="form.description"
                                     id="description"
                                     rows="4"
+                                    maxlength="100"
                                     placeholder="Describe the tourist spot"
                                     class="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
                                 ></textarea>

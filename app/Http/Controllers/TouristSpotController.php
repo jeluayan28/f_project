@@ -92,7 +92,6 @@ class TouristSpotController extends Controller
         $categories = Category::all();
         return Inertia::render('TouristSpots/Create', ['categories' => $categories,]);
     }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -103,54 +102,62 @@ class TouristSpotController extends Controller
             'category_id' => 'required|exists:categories,category_id',
         ]);
     
-        // Add the created_by field
-        $validated['created_by'] = auth()->id();
-        $validated['created_at'] = now();
-        $validated['updated_at'] = now();
+        // Strip HTML tags and sanitize input
+        $sanitized = [
+            'name' => strip_tags($validated['name']),
+            'location' => strip_tags($validated['location']),
+            'description' => $validated['description'] ? strip_tags($validated['description']) : null,
+            'rating' => $validated['rating'],
+            'category_id' => $validated['category_id'],
+            'created_by' => Auth::id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
     
         // Use DB Facade to insert data
-        DB::table('tourist_spots')->insert($validated);
+        DB::table('tourist_spots')->insert($sanitized);
     
         return redirect()->route('spot.index')->with('success', 'Tourist spot created successfully.');
     }
-    
 
     public function edit($spot)
-{
+    {
+        $touristSpot = DB::table('tourist_spots')->where('spot_id', $spot)->first();
+        $categories = DB::table('categories')->get();
 
-    $touristSpot = DB::table('tourist_spots')->where('spot_id', $spot)->first();
-    $categories = DB::table('categories')->get();
+        return Inertia::render('TouristSpots/Edit', [
+            'touristSpot' => $touristSpot,
+            'categories' => $categories,
+        ]);
+    }
 
-    return Inertia::render('TouristSpots/Edit', [
-        'touristSpot' => $touristSpot,
-        'categories' => $categories,
-    ]);
-}
+    public function update(Request $request, TouristSpot $spot)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'description' => 'required|string',
+            'rating' => 'required|numeric|min:0|max:5',
+            'category_id' => 'required|exists:categories,category_id',
+        ]);
 
-public function update(Request $request, TouristSpot $spot)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'location' => 'required|string|max:255',
-        'description' => 'required|string',
-        'rating' => 'required|numeric|min:0|max:5',
-        'category_id' => 'required|exists:categories,category_id',
-    ]);
-
-    // Update the spot using the DB facade
-    DB::table('tourist_spots')
-        ->where('spot_id', $spot->spot_id)
-        ->update([
+        // Strip HTML tags and sanitize input
+        $sanitized = [
             'name' => strip_tags($validated['name']),
             'location' => strip_tags($validated['location']),
             'description' => strip_tags($validated['description']),
             'rating' => $validated['rating'],
             'category_id' => $validated['category_id'],
-            'updated_at' => now(), // Update timestamp
-        ]);
+            'updated_at' => now(),
+        ];
 
-    return redirect()->route('spot.show', $spot)->with('success', 'Tourist spot updated successfully.');
-}
+        // Update the spot using the DB facade
+        DB::table('tourist_spots')
+            ->where('spot_id', $spot->spot_id)
+            ->update($sanitized);
+
+        return redirect()->route('spot.show', $spot)->with('success', 'Tourist spot updated successfully.');
+    }
 
 
 public function show($id)
